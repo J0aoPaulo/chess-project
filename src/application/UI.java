@@ -28,12 +28,17 @@ public class UI {
     public static final String ANSI_CYAN_BACKGROUND = "\u001B[46m";
     public static final String ANSI_WHITE_BACKGROUND = "\u001B[47m";
 
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
     public static ChessPosition readChessPosition(Scanner sc) {
         try {
             String positionChess = sc.nextLine();
             char letter = positionChess.charAt(0);
             int number = Integer.parseInt(positionChess.substring(1));
-            return new ChessPosition(letter, number);
+            return new ChessPosition(Character.toLowerCase(letter), number);
         } catch (RuntimeException e) {
             throw new InputMismatchException("Error reading new Chess Position. Valid value are from A1 to H8");
         }
