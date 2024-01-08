@@ -25,18 +25,12 @@ public class Board {
     }
 
     public Piece piece(int row, int column) {
-        if(!postionExists(row, column)) {
-            throw new BoardException("Error: Position not on the board");
-        }
-
+        verifyPosition(row, column);
         return pieces[row][column];
     }
 
     public Piece piecePosition(Position position) {
-        if(!postionExists(position.getRow(), position.getColumn())) {
-            throw new BoardException("Error: Position not on the board");
-        }
-
+        verifyPosition(position.getRow(), position.getColumn());
         return pieces[position.getRow()][position.getColumn()];
     }
 
@@ -48,17 +42,32 @@ public class Board {
         piece.position = position;
     }
 
-    public boolean postionExists(int row, int column) {
+    public Piece removePiece(Position position) {
+        verifyPosition(position.getRow(), position.getColumn());
+        if(piecePosition(position) == null) {
+            return null;
+        }
+        Piece aux = piecePosition(position);
+        aux.position = null;
+        pieces[position.getRow()][position.getColumn()] = null;
+        return aux;
+    }
+
+    public boolean positionExists(int row, int column) {
         boolean isRowValid = row >= 0 && row < rows;
         boolean isColumnValid = column >= 0 && column < columns;
 
         return isRowValid && isColumnValid;
     }
 
-    public boolean thereIsAPiece(Position position) {
-        if(!postionExists(position.getRow(), position.getColumn())) {
+    public void verifyPosition(int row, int column) {
+        if(!positionExists(row, column)) {
             throw new BoardException("Error: Position not on the board");
         }
+    }
+
+    public boolean thereIsAPiece(Position position) {
+        verifyPosition(position.getRow(), position.getColumn());
         return piecePosition(position) != null;
     }
 }
