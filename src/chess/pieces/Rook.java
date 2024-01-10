@@ -15,4 +15,61 @@ public class Rook extends ChessPiece {
     public String toString() {
         return "R";
     }
+
+    public void moveRookAbove(Position p, boolean[][] mat) {
+        p.setValues(position.getRow() - 1, position.getColumn());
+        while (getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setRow(p.getRow() - 1);
+        }
+        if (getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(position)) {
+            mat[p.getRow()][p.getColumn()] = true;
+        }
+    }
+
+    public void moveRookLeft(Position p, boolean[][] mat) {
+        p.setValues(position.getRow(), position.getColumn() - 1);
+        while (getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setColumn(p.getColumn() - 1);
+        }
+        if (getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(position)) {
+            mat[p.getRow()][p.getColumn()] = true;
+        }
+    }
+
+    public void moveRookBelow(Position p, boolean[][] mat) {
+        p.setValues(position.getRow() + 1, position.getColumn());
+        while (getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setRow(p.getRow() + 1);
+        }
+        if (getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(position)) {
+            mat[p.getRow()][p.getColumn()] = true;
+        }
+    }
+
+    public void moveRookRight(Position p, boolean[][] mat) {
+        p.setValues(position.getRow(), position.getColumn() + 1);
+        while (getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setColumn(p.getColumn() + 1);
+        }
+        if (getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(position)) {
+            mat[p.getRow()][p.getColumn()] = true;
+        }
+    }
+
+    @Override
+    public boolean[][] possibleMoves() {
+        boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
+        Position p = new Position(0, 0);
+
+        moveRookAbove(p, mat);
+        moveRookLeft(p, mat);
+        moveRookRight(p, mat);
+        moveRookBelow(p, mat);
+
+        return mat;
+    }
 }
