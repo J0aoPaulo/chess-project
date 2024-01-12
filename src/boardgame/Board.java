@@ -62,7 +62,7 @@ public class Board {
 
     public void verifyPosition(int row, int column) {
         if(!positionExists(row, column)) {
-            throw new BoardException("Error: Position not on the board");
+            //throw new BoardException("Error: Position not on the board");
         }
     }
 

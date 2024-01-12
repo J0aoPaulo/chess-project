@@ -12,35 +12,32 @@ public class Pawn extends ChessPiece {
 
     private boolean verifyPosition(Position p) {
         boolean verifyPositionExist = getBoard().positionExists(p.getRow(), p.getColumn());
-        boolean verifyPieceInThisPosition = getBoard().thereIsAPiece(p);
 
-        return verifyPositionExist && !verifyPieceInThisPosition;
+        return verifyPositionExist && !getBoard().thereIsAPiece(p);
     }
 
     private boolean verifyPositionEnemy(Position p) {
       return getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(p);
     }
 
-    private boolean makeOneMove(Position p, boolean[][] mat) {
-        if(verifyPosition(p))
-            return mat[p.getRow()][p.getColumn()] = true;
-
-        return false;
+    private void makeOneMove(Position p, boolean[][] mat) {
+        if(getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+        }
     }
 
-    private boolean makeTwoMove(Position p, Position p2, boolean[][] mat) {
+    private void makeTwoMove(Position p, Position p2, boolean[][] mat) {
         if(verifyPosition(p) && verifyPosition(p2) && getMoveCount() == 0)
-            return mat[p.getRow()][p.getColumn()] = true;
+            mat[p.getRow()][p.getColumn()] = true;
 
-        return false;
     }
 
-    private boolean moveToEnemy(Position p, boolean[][] mat) {
-        if(getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(p))
-           return mat[p.getRow()][p.getColumn()] = true;
+    private void moveToEnemy(Position p, boolean[][] mat) {
+        if(verifyPositionEnemy(p) && isThereOpponentPiece(p))
+            mat[p.getRow()][p.getColumn()] = true;
 
-        return false;
     }
+
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
@@ -64,7 +61,7 @@ public class Pawn extends ChessPiece {
             makeOneMove(p, mat);
 
             p.setValues(position.getRow() + 2, position.getColumn());
-            Position p2 = new Position(p.getRow() + 1, p.getColumn());
+            Position p2 = new Position(p.getRow() - 1, p.getColumn());
             makeTwoMove(p, p2, mat);
 
             p.setValues(position.getRow() + 1, position.getColumn() - 1);
