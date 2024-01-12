@@ -16,26 +16,66 @@ public class Rook extends ChessPiece {
         return "R";
     }
 
-    private void moveInDirection(Position p, boolean[][] mat, int rowChange, int colChange) {
-        p.setValues(position.getRow() + rowChange, position.getColumn() + colChange);
-        while (getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+    private boolean verifyPosition(Position p) {
+        boolean thisPositionExist = getBoard().positionExists(p.getRow(), p.getColumn());
+
+        return thisPositionExist && !getBoard().thereIsAPiece(p);
+    }
+
+    private void moveAbove(Position p, boolean[][] mat) {
+        while (verifyPosition(p)) {
             mat[p.getRow()][p.getColumn()] = true;
-            p.setValues(p.getRow() + rowChange, p.getColumn() + colChange);
+            p.setValues(p.getRow() - 1, p.getColumn());
         }
+    }
+
+    private void moveBelow(Position p, boolean[][] mat) {
+        while (verifyPosition(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setValues(p.getRow() + 1, p.getColumn());
+        }
+    }
+
+    private void moveRight(Position p, boolean[][] mat) {
+        while (verifyPosition(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setValues(p.getRow(), p.getColumn() + 1);
+        }
+    }
+
+    private void moveLeft(Position p, boolean[][] mat) {
+        while (verifyPosition(p)) {
+            mat[p.getRow()][p.getColumn()] = true;
+            p.setValues(p.getRow(), p.getColumn() - 1);
+        }
+    }
+
+    private void defeatEnemy(Position p, boolean[][] mat) {
         if (getBoard().positionExists(p.getRow(), p.getColumn()) && isThereOpponentPiece(p)) {
             mat[p.getRow()][p.getColumn()] = true;
         }
     }
 
     @Override
-    public boolean[][] possibleMoves() {
+    public boolean[][] possibleMoves () {
         boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
         Position p = new Position(0, 0);
 
-        moveInDirection(p, mat, -1, 0); // Move above
-        moveInDirection(p, mat, 1, 0);  // Move below
-        moveInDirection(p, mat, 0, -1); // Move to left
-        moveInDirection(p, mat, 0, 1);  // Move to right
+        p.setValues(position.getRow() - 1, position.getColumn());
+        moveAbove(p, mat);
+        defeatEnemy(p, mat);
+
+        p.setValues(position.getRow() + 1, position.getColumn());
+        moveBelow(p, mat);
+        defeatEnemy(p, mat);
+
+        p.setValues(position.getRow(), position.getColumn() - 1);
+        moveLeft(p, mat);
+        defeatEnemy(p, mat);
+
+        p.setValues(position.getRow(), position.getColumn() + 1);
+        moveRight(p, mat);
+        defeatEnemy(p, mat);
 
         return mat;
     }
