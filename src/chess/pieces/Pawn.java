@@ -21,7 +21,7 @@ public class Pawn extends ChessPiece {
     }
 
     private void makeOneMove(Position p, boolean[][] mat) {
-        if(getBoard().positionExists(p.getRow(), p.getColumn()) && !getBoard().thereIsAPiece(p)) {
+        if(verifyPosition(p)) {
             mat[p.getRow()][p.getColumn()] = true;
         }
     }
