@@ -2,12 +2,17 @@ package chess.pieces;
 
 import boardgame.Board;
 import boardgame.Position;
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.Color;
 
 public class Pawn extends ChessPiece {
-    public Pawn(Board board, Color color) {
+
+    private ChessMatch chessMatch;
+
+    public Pawn(Board board, Color color, ChessMatch chessMatch) {
         super(board, color);
+        this.chessMatch = chessMatch;
     }
 
     private boolean verifyPosition(Position p) {
@@ -38,6 +43,36 @@ public class Pawn extends ChessPiece {
 
     }
 
+    private boolean enPassantAvailable(Position p) {
+        return getBoard().piece(p.getRow(), p.getColumn()) == chessMatch.getEnPassantVulnerable();
+    }
+
+    private void verifyEnPassantWhite(Position p, boolean[][] mat) {
+        if(p.getRow() == 3) {
+            Position left = new Position(position.getRow(), position.getColumn() - 1);
+            if(verifyPositionEnemy(left) && enPassantAvailable(p)) {
+                mat[left.getRow() - 1][left.getColumn()] = true;
+            }
+            Position right = new Position(position.getRow(), position.getColumn() + 1);
+            if(verifyPositionEnemy(right) && enPassantAvailable(right)) {
+                mat[right.getRow() - 1][right.getColumn()] = true;
+            }
+        }
+    }
+
+    private void verifyEnPassantBlack(Position p, boolean[][] mat) {
+        if(p.getRow() == 4) {
+            Position left = new Position(position.getRow(), position.getColumn() - 1);
+            if(verifyPositionEnemy(left) && enPassantAvailable(p)) {
+                mat[left.getRow() + 1][left.getColumn()] = true;
+            }
+            Position right = new Position(position.getRow(), position.getColumn() + 1);
+            if(verifyPositionEnemy(right) && enPassantAvailable(right)) {
+                mat[right.getRow() + 1][right.getColumn()] = true;
+            }
+        }
+    }
+
     @Override
     public boolean[][] possibleMoves() {
         boolean[][] mat = new boolean[getBoard().getRows()][getBoard().getColumns()];
@@ -56,6 +91,8 @@ public class Pawn extends ChessPiece {
 
             p.setValues(position.getRow() - 1, position.getColumn() + 1);
             moveToEnemy(p, mat);
+
+            verifyEnPassantWhite(position, mat);
         } else {
             p.setValues(position.getRow() + 1, position.getColumn());
             makeOneMove(p, mat);
@@ -69,6 +106,8 @@ public class Pawn extends ChessPiece {
 
             p.setValues(position.getRow() + 1, position.getColumn() + 1);
             moveToEnemy(p, mat);
+
+            verifyEnPassantBlack(position, mat);
         }
         return mat;
     }
